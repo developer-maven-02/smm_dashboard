@@ -1,0 +1,225 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+
+@layer base {
+  /* ===== BLUE PROFESSIONAL THEME (default) ===== */
+  :root,
+  [data-theme="blue"] {
+    --background: 216 28% 97%;
+    --foreground: 222 47% 11%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+
+    --primary: 217 91% 50%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 214 20% 93%;
+    --secondary-foreground: 222 47% 11%;
+
+    --muted: 214 20% 94%;
+    --muted-foreground: 215 16% 47%;
+
+    --accent: 199 89% 48%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 214 20% 90%;
+    --input: 214 20% 90%;
+    --ring: 217 91% 50%;
+
+    --radius: 0.75rem;
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217 91% 60%;
+
+    --brand-primary: 217 91% 50%;
+    --brand-secondary: 199 89% 48%;
+    --brand-glow: 217 91% 60%;
+
+    --glass-bg: 0 0% 100% / 0.7;
+    --glass-border: 214 20% 90% / 0.5;
+    --glass-shadow: 217 91% 50% / 0.08;
+
+    --font-display: 'Space Grotesk', sans-serif;
+    --font-body: 'Inter', sans-serif;
+  }
+
+  /* ===== DARK PROFESSIONAL THEME ===== */
+  [data-theme="dark"] {
+    --background: 222 47% 6%;
+    --foreground: 210 20% 92%;
+
+    --card: 222 40% 10%;
+    --card-foreground: 210 20% 92%;
+
+    --popover: 222 40% 10%;
+    --popover-foreground: 210 20% 92%;
+
+    --primary: 217 91% 55%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 222 30% 14%;
+    --secondary-foreground: 210 20% 92%;
+
+    --muted: 222 25% 16%;
+    --muted-foreground: 215 16% 55%;
+
+    --accent: 199 89% 48%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 222 20% 18%;
+    --input: 222 20% 18%;
+    --ring: 217 91% 55%;
+
+    --brand-primary: 217 91% 55%;
+    --brand-secondary: 199 89% 48%;
+    --brand-glow: 217 91% 65%;
+
+    --glass-bg: 222 40% 10% / 0.8;
+    --glass-border: 217 91% 55% / 0.15;
+    --glass-shadow: 217 91% 55% / 0.1;
+  }
+
+  /* Company overrides - work on both themes */
+  [data-company="maven-jobs"] {
+    --primary: 210 75% 48%;
+    --accent: 152 60% 42%;
+    --brand-primary: 210 75% 48%;
+    --brand-secondary: 152 60% 42%;
+    --brand-glow: 210 75% 58%;
+    --ring: 210 75% 48%;
+  }
+
+  [data-company="profit-pathshala"] {
+    --primary: 40 85% 52%;
+    --primary-foreground: 30 30% 8%;
+    --accent: 35 90% 45%;
+    --brand-primary: 40 85% 52%;
+    --brand-secondary: 35 90% 45%;
+    --brand-glow: 40 85% 62%;
+    --ring: 40 85% 52%;
+  }
+
+  [data-company="mks"] {
+    --primary: 225 80% 56%;
+    --accent: 240 70% 65%;
+    --brand-primary: 225 80% 56%;
+    --brand-secondary: 240 70% 65%;
+    --brand-glow: 225 80% 66%;
+    --ring: 225 80% 56%;
+  }
+
+  [data-company="savvi"] {
+    --primary: 174 65% 42%;
+    --accent: 145 55% 48%;
+    --brand-primary: 174 65% 42%;
+    --brand-secondary: 145 55% 48%;
+    --brand-glow: 174 65% 52%;
+    --ring: 174 65% 42%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-body);
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply rounded-2xl border backdrop-blur-xl;
+    background: hsl(var(--glass-bg));
+    border-color: hsl(var(--glass-border));
+    box-shadow: 0 8px 32px hsl(var(--glass-shadow)),
+                0 0 0 1px hsl(var(--glass-border));
+  }
+
+  .brand-gradient {
+    background: linear-gradient(135deg, hsl(var(--brand-primary)), hsl(var(--brand-secondary)));
+  }
+
+  .brand-gradient-text {
+    background: linear-gradient(135deg, hsl(var(--brand-primary)), hsl(var(--brand-secondary)));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .brand-glow {
+    box-shadow: 0 0 20px hsl(var(--brand-primary) / 0.3),
+                0 0 60px hsl(var(--brand-primary) / 0.1);
+  }
+
+  .hover-lift {
+    @apply transition-all duration-300 cursor-pointer;
+  }
+  .hover-lift:hover {
+    transform: translateY(-4px) scale(1.01);
+    box-shadow: 0 20px 50px hsl(var(--glass-shadow)),
+                0 0 0 1px hsl(var(--glass-border));
+  }
+
+  .dashboard-bg {
+    background: linear-gradient(135deg,
+      hsl(var(--background)) 0%,
+      hsl(var(--brand-primary) / 0.04) 30%,
+      hsl(var(--brand-secondary) / 0.06) 60%,
+      hsl(var(--background)) 100%
+    );
+    min-height: 100vh;
+  }
+
+  .stat-card {
+    @apply rounded-2xl border border-border/50 p-5 transition-all duration-300;
+    background: hsl(var(--card));
+    box-shadow: 0 4px 20px hsl(var(--glass-shadow));
+  }
+  .stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px hsl(var(--glass-shadow));
+  }
+
+  .pill-btn {
+    @apply inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition-all duration-300;
+  }
+  .pill-btn:hover {
+    transform: scale(1.03);
+    box-shadow: 0 4px 20px hsl(var(--brand-primary) / 0.25);
+  }
+
+  .section-card {
+    @apply rounded-2xl border border-border/50 p-6 transition-all duration-300 backdrop-blur-sm;
+    background: hsl(var(--card));
+    box-shadow: 0 4px 24px hsl(var(--glass-shadow));
+  }
+  .section-card:hover {
+    box-shadow: 0 12px 48px hsl(var(--glass-shadow));
+  }
+}
