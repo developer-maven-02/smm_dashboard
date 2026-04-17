@@ -18,6 +18,12 @@ export interface Company {
   igUserId: string;
 }
 
+export const COMPANY_NAME_TO_ID: Record<string, CompanyId> = {
+  'Maven Jobs': 'maven-jobs',
+  'Profit Pathshala': 'profit-pathshala',
+  'MKS': 'mks',
+  'Savvi': 'savvi',
+};
 const LOGO_MAVEN = '/logo-maven.png';
 const LOGO_PP = '/logo-profit-pathshala.png';
 const LOGO_MKS = '/logo-mks.png';
