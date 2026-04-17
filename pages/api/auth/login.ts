@@ -6,14 +6,14 @@ export default async function handler(
   res: NextApiResponse
 ) {
   if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method not allowed" });
+    return res.status(200).json({ error: "Method not allowed" });
   }
 
   try {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return res.status(400).json({
+      return res.status(200).json({
         error: "Email and password are required",
       });
     }
@@ -25,7 +25,7 @@ export default async function handler(
     });
 
     if (error || !data.user) {
-      return res.status(401).json({
+      return res.status(200).json({
         error: "Invalid email or password",
       });
     }
@@ -41,6 +41,7 @@ export default async function handler(
     });
 
   } catch (error: any) {
+    console.log('error message:',error.message);
     return res.status(500).json({
       error: error.message || "Login failed",
     });
