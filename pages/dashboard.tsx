@@ -235,6 +235,11 @@ function DashboardContent() {
 
 // Date Range Header Component for Analytics
 function DateRangeHeader({ startDate, endDate }: { startDate: string; endDate: string }) {
+  const formatDate = (dateStr: string) => {
+    if (!dateStr) return "";
+    const [year, month, day] = dateStr.split("-");
+    return `${day}/${month}/${year}`;
+  };
   return (
     <div className="mb-4 flex items-center justify-between rounded-xl border border-border/50 bg-gradient-to-r from-primary/5 to-transparent px-4 py-2">
       <div className="flex items-center gap-2">
