@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-
+import { getAccessToken } from "@/lib/accessToken";
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -19,7 +19,7 @@ export default async function handler(
       });
     }
 
-    const accessToken = process.env.IG_ACCESS_TOKEN;
+    const accessToken = await getAccessToken();
 
     if (!accessToken) {
       return res.status(500).json({
