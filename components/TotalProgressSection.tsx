@@ -1,7 +1,7 @@
 import DashboardCard from './DashboardCard';
 import { useWorkflow, CompanyId } from '@/context/WorkflowContext';
 import { BarChart3, PenTool, Send, Linkedin, TrendingUp, Users, ArrowUpRight, Eye, Clock } from 'lucide-react';
-
+import { useEffect, useState } from "react";
 const COMPANY_STATS: Record<CompanyId, { designed: string; published: string; pending: string; engagement: string }> = {
   'maven-jobs': { designed: '55+', published: '54', pending: '1', engagement: '5K' },
   'profit-pathshala': { designed: '75+', published: '74', pending: '1', engagement: '5.5K' },
@@ -40,14 +40,43 @@ export default function TotalProgressSection() {
   const { activeCompany, activeCompanyData } = useWorkflow();
   const stats = COMPANY_STATS[activeCompany];
   const linkedin = LINKEDIN_DATA[activeCompany];
+ const igUserId = activeCompanyData?.igUserId;
+const [igStats, setIgStats] = useState({
+  totalPosts: 0,
+  totalViews: 0,
+});
+useEffect(() => {
+  if (!igUserId) return;
 
+  const fetchInstagramData = async () => {
+    try {
+      const res = await fetch(
+        `/api/meta/report?ig_user_id=${igUserId}&since=2026-03-01&until=2026-03-31`
+      );
+      const data = await res.json();
+
+      if (data.success) {
+        setIgStats({
+          totalPosts: data.totalPosts,
+          totalViews: data.totalViews,
+        });
+      }
+
+      console.log("IG REPORT:", data);
+    } catch (error) {
+      console.error("Instagram API error:", error);
+    }
+  };
+
+  fetchInstagramData();
+}, [igUserId]);
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 animate-slide-up" style={{ animationDelay: '100ms', animationFillMode: 'both' }}>
         <StatStrip icon={<PenTool className="h-4 w-4" />} label="Total Designed" value={stats.designed} color="hsl(217 91% 50%)" />
-        <StatStrip icon={<Send className="h-4 w-4" />} label="Total Published" value={stats.published} color="hsl(152 60% 42%)" />
+        <StatStrip icon={<Send className="h-4 w-4" />} label="Total Published" value={igStats.totalPosts.toString()} color="hsl(152 60% 42%)" />
         <StatStrip icon={<Clock className="h-4 w-4" />} label="Pending" value={stats.pending} color="hsl(40 85% 52%)" />
-        <StatStrip icon={<Eye className="h-4 w-4" />} label="Engagement" value={stats.engagement} color="hsl(270 70% 55%)" />
+        <StatStrip icon={<Eye className="h-4 w-4" />} label="Engagement" value={igStats.totalViews.toString()} color="hsl(270 70% 55%)" />
       </div>
 
       <DashboardCard title={`LinkedIn Growth — ${activeCompanyData.name}`} icon={<Linkedin className="h-4 w-4 text-primary" />} delay={150}>

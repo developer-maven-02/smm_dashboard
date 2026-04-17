@@ -7,12 +7,28 @@ export default function Navbar() {
   const { activeCompanyData, setActiveCompany, activeCompany, adminMode, toggleAdminMode, themeMode, setThemeMode, analyticsPeriod, setAnalyticsPeriod } = useWorkflow();
   const [time, setTime] = useState(new Date());
   const [open, setOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
+const [user, setUser] = useState<{
+  email?: string;
+  name?: string;
+} | null>(null);
+const [mounted, setMounted] = useState(false);
+useEffect(() => {
+  setMounted(true);
 
-  useEffect(() => {
-    const t = setInterval(() => setTime(new Date()), 1000);
-    return () => clearInterval(t);
-  }, []);
+  const storedUser = localStorage.getItem("smm_user");
+  if (storedUser) {
+    setUser(JSON.parse(storedUser));
+  }
+}, []);
 
+// logout
+const handleLogout = () => {
+  localStorage.removeItem("smm_user");
+  window.location.href = "/login";
+};
+
+if (!mounted) return null;
   return (
     <nav className="glass-card sticky top-0 z-50 mx-4 mt-4 px-4 py-3 sm:px-6">
       <div className="flex items-center justify-between">
@@ -63,11 +79,11 @@ export default function Navbar() {
 
         {/* Right: Time + Theme + Admin + Profile */}
         <div className="flex items-center gap-2">
-          <div className="hidden items-center gap-1.5 text-xs text-muted-foreground sm:flex">
+          {/* <div className="hidden items-center gap-1.5 text-xs text-muted-foreground sm:flex">
             <Clock className="h-3.5 w-3.5" />
             <span>{time.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}</span>
             <span className="font-mono">{time.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}</span>
-          </div>
+          </div> */}
           <button
             onClick={() => setThemeMode(themeMode === 'blue' ? 'dark' : 'blue')}
             className="rounded-lg p-2 text-muted-foreground transition-colors hover:bg-secondary"
@@ -82,9 +98,38 @@ export default function Navbar() {
           >
             <Settings className="h-4 w-4" />
           </button>
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
-            L
-          </div>
+          <div className="relative">
+ {mounted && (
+  <button  onClick={() => setProfileOpen(!profileOpen)} className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
+    {user?.name?.charAt(0)?.toUpperCase() ||
+      user?.email?.charAt(0)?.toUpperCase() ||
+      "U"}
+  </button>
+)}
+
+  {profileOpen && (
+    <div className="absolute right-0 mt-2 w-56 rounded-xl border border-border bg-card shadow-lg p-2">
+
+      {/* 👤 Name */}
+      <div className="px-3 py-2 text-sm font-semibold text-foreground">
+        {user?.name || "User"}
+      </div>
+
+      {/* 📧 Email */}
+      <div className="px-3 pb-2 text-xs text-muted-foreground border-b border-border">
+        {user?.email || "No email"}
+      </div>
+
+      {/* 🚪 Logout */}
+      <button
+        onClick={handleLogout}
+        className="mt-1 w-full text-left px-3 py-2 text-sm text-red-500 hover:bg-secondary rounded-lg"
+      >
+        Logout
+      </button>
+    </div>
+  )}
+</div>
         </div>
       </div>
 

@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-
+import { IG_ACCOUNTS } from '@/lib/instagram';
 export type CompanyId = 'maven-jobs' | 'profit-pathshala' | 'mks' | 'savvi';
 export type ThemeMode = 'blue' | 'dark';
 export type AnalyticsPeriod = '7d' | 'march' | 'april' | 'april-projection' | '30d' | '90d' | null;
@@ -9,6 +9,7 @@ export interface Company {
   name: string;
   shortName: string;
   logo: string;
+ igUserId: string;
 }
 
 const LOGO_MAVEN = '/logo-maven.png';
@@ -17,10 +18,34 @@ const LOGO_MKS = '/logo-mks.png';
 const LOGO_SAVVI = '/logo-savvi.png';
 
 export const COMPANIES: Company[] = [
-  { id: 'maven-jobs', name: 'Maven Jobs', shortName: 'MJ', logo: LOGO_MAVEN },
-  { id: 'profit-pathshala', name: 'Profit Pathshala', shortName: 'PP', logo: LOGO_PP },
-  { id: 'mks', name: 'MKS', shortName: 'MKS', logo: LOGO_MKS },
-  { id: 'savvi', name: 'Savvi', shortName: 'SV', logo: LOGO_SAVVI },
+  {
+    id: 'maven-jobs',
+    name: 'Maven Jobs',
+    shortName: 'MJ',
+    logo: LOGO_MAVEN,
+    igUserId: IG_ACCOUNTS.MAVEN,
+  },
+  {
+    id: 'profit-pathshala',
+    name: 'Profit Pathshala',
+    shortName: 'PP',
+    logo: LOGO_PP,
+    igUserId: IG_ACCOUNTS.PP,
+  },
+  {
+    id: 'mks',
+    name: 'MKS',
+    shortName: 'MKS',
+    logo: LOGO_MKS,
+    igUserId: IG_ACCOUNTS.MKS,
+  },
+  {
+    id: 'savvi',
+    name: 'Savvi',
+    shortName: 'SV',
+    logo: LOGO_SAVVI,
+    igUserId: IG_ACCOUNTS.SAVVI,
+  },
 ];
 
 export const COMPANY_NAME_TO_ID: Record<string, CompanyId> = {
@@ -161,7 +186,26 @@ function loadState(): WorkflowState {
 const WorkflowContext = createContext<WorkflowContextType | null>(null);
 
 export function WorkflowProvider({ children }: { children: ReactNode }) {
-  const [state, setState] = useState<WorkflowState>(loadState);
+  const [mounted, setMounted] = useState(false);
+  const [state, setState] = useState<WorkflowState>(() => mounted ? loadState() : {
+    activeCompany: 'maven-jobs',
+    adminMode: false,
+    themeMode: 'blue',
+    analyticsPeriod: null,
+    links: {
+      'maven-jobs': { ...DEFAULT_LINKS },
+      'profit-pathshala': { ...DEFAULT_LINKS },
+      'mks': { ...DEFAULT_LINKS },
+      'savvi': { ...DEFAULT_LINKS },
+    },
+    notes: { ...DEFAULT_ALL_NOTES },
+    checklist: { ...DEFAULT_ALL_CHECKLISTS },
+  });
+
+  useEffect(() => {
+    setMounted(true);
+    setState(loadState());
+  }, []);
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));

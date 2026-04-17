@@ -25,17 +25,17 @@ export default function HeroSection() {
 
         <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
           <Link
-            href="/dashboard"
+            href="/login"
             className="pill-btn brand-gradient text-primary-foreground text-base shadow-lg hover:shadow-xl"
           >
             Explore Platform
             <ArrowRight className="h-4 w-4" />
           </Link>
           <Link
-            href="/dashboard"
+            href="/login"
             className="pill-btn border border-border bg-card text-foreground text-base hover:bg-secondary"
           >
-            Manage Social Media
+            Sign In
             <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
