@@ -22,7 +22,7 @@ export default async function handler(
     const accessToken = await getAccessToken();
 
     if (!accessToken) {
-      return res.status(500).json({
+      return res.status(200).json({
         error: "Missing IG_ACCESS_TOKEN",
       });
     }
