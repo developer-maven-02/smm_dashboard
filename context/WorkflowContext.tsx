@@ -1,15 +1,21 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { IG_ACCOUNTS } from '@/lib/instagram';
+
 export type CompanyId = 'maven-jobs' | 'profit-pathshala' | 'mks' | 'savvi';
 export type ThemeMode = 'blue' | 'dark';
-export type AnalyticsPeriod = '7d' | 'march' | 'april' | 'april-projection' | '30d' | '90d' | null;
+
+// ✅ ONLY DATE RANGE NOW
+export type AnalyticsPeriod = {
+  start: string;
+  end: string;
+} | null;
 
 export interface Company {
   id: CompanyId;
   name: string;
   shortName: string;
   logo: string;
- igUserId: string;
+  igUserId: string;
 }
 
 const LOGO_MAVEN = '/logo-maven.png';
@@ -47,13 +53,6 @@ export const COMPANIES: Company[] = [
     igUserId: IG_ACCOUNTS.SAVVI,
   },
 ];
-
-export const COMPANY_NAME_TO_ID: Record<string, CompanyId> = {
-  'Maven Jobs': 'maven-jobs',
-  'Profit Pathshala': 'profit-pathshala',
-  'MKS': 'mks',
-  'Savvi': 'savvi',
-};
 
 export interface CompanyLinks {
   canvaDashboard: string;
@@ -101,7 +100,7 @@ interface WorkflowState {
   activeCompany: CompanyId;
   adminMode: boolean;
   themeMode: ThemeMode;
-  analyticsPeriod: AnalyticsPeriod;
+  analyticsPeriod: AnalyticsPeriod; // ✅ only this
   links: Record<CompanyId, CompanyLinks>;
   notes: Record<CompanyId, string>;
   checklist: Record<CompanyId, ChecklistState>;
@@ -117,9 +116,7 @@ interface WorkflowContextType extends WorkflowState {
   toggleChecklist: (key: keyof ChecklistState) => void;
   resetChecklist: () => void;
   activeCompanyData: Company;
-  /** Current company's notes */
   currentNotes: string;
-  /** Current company's checklist */
   currentChecklist: ChecklistState;
 }
 
@@ -144,29 +141,16 @@ function loadState(): WorkflowState {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
       const parsed = JSON.parse(saved);
-      // Migrate old single notes/checklist to per-company
-      let notes = parsed.notes;
-      if (typeof notes === 'string') {
-        notes = { ...DEFAULT_ALL_NOTES, [parsed.activeCompany || 'maven-jobs']: notes };
-      } else if (!notes || typeof notes !== 'object') {
-        notes = { ...DEFAULT_ALL_NOTES };
-      }
-      let checklist = parsed.checklist;
-      if (checklist && !checklist['maven-jobs'] && typeof checklist === 'object') {
-        // Old format: single checklist object
-        checklist = { ...DEFAULT_ALL_CHECKLISTS, [parsed.activeCompany || 'maven-jobs']: checklist };
-      } else if (!checklist) {
-        checklist = { ...DEFAULT_ALL_CHECKLISTS };
-      }
+
       return {
         ...parsed,
-        themeMode: parsed.themeMode || 'blue',
-        analyticsPeriod: null,
-        notes,
-        checklist,
+        analyticsPeriod: parsed.analyticsPeriod || null,
+        notes: parsed.notes || DEFAULT_ALL_NOTES,
+        checklist: parsed.checklist || DEFAULT_ALL_CHECKLISTS,
       };
     }
   } catch {}
+
   return {
     activeCompany: 'maven-jobs',
     adminMode: false,
@@ -186,26 +170,7 @@ function loadState(): WorkflowState {
 const WorkflowContext = createContext<WorkflowContextType | null>(null);
 
 export function WorkflowProvider({ children }: { children: ReactNode }) {
-  const [mounted, setMounted] = useState(false);
-  const [state, setState] = useState<WorkflowState>(() => mounted ? loadState() : {
-    activeCompany: 'maven-jobs',
-    adminMode: false,
-    themeMode: 'blue',
-    analyticsPeriod: null,
-    links: {
-      'maven-jobs': { ...DEFAULT_LINKS },
-      'profit-pathshala': { ...DEFAULT_LINKS },
-      'mks': { ...DEFAULT_LINKS },
-      'savvi': { ...DEFAULT_LINKS },
-    },
-    notes: { ...DEFAULT_ALL_NOTES },
-    checklist: { ...DEFAULT_ALL_CHECKLISTS },
-  });
-
-  useEffect(() => {
-    setMounted(true);
-    setState(loadState());
-  }, []);
+  const [state, setState] = useState<WorkflowState>(loadState);
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
@@ -225,8 +190,9 @@ export function WorkflowProvider({ children }: { children: ReactNode }) {
   const setThemeMode = (mode: ThemeMode) =>
     setState(s => ({ ...s, themeMode: mode }));
 
+  // ✅ FIXED
   const setAnalyticsPeriod = (period: AnalyticsPeriod) =>
-    setState(s => ({ ...s, analyticsPeriod: s.analyticsPeriod === period ? null : period }));
+    setState(s => ({ ...s, analyticsPeriod: period }));
 
   const updateLink = (company: CompanyId, key: keyof CompanyLinks, value: string) =>
     setState(s => ({
